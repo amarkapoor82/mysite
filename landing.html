@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Get it now</title>
+<style>
+  :root {
+    --bg: #faf8f4;
+    --surface: #ffffff;
+    --surface-2: #f1ede6;
+    --text: #1b1a17;
+    --muted: #5c574e;
+    --border: #e3ddd2;
+    --accent: #ff5a36;
+    --accent-ink: #ffffff;
+    --accent-soft: #ffe4dc;
+    --ring: #1b1a17;
+    --shadow: 0 1px 2px rgba(27,26,23,.06), 0 12px 32px -12px rgba(27,26,23,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12110f;
+      --surface: #1c1b18;
+      --surface-2: #26241f;
+      --text: #f3efe7;
+      --muted: #b0a998;
+      --border: #34312a;
+      --accent: #ff7a5c;
+      --accent-ink: #1b0f0b;
+      --accent-soft: #3a211a;
+      --ring: #f3efe7;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -12px rgba(0,0,0,.6);
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+  .skip { position: absolute; left: -9999px; top: 8px; background: var(--surface); padding: 8px 12px; border-radius: 8px; z-index: 50; }
+  .skip:focus { left: 16px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px;
+    background: var(--accent); color: var(--accent-ink);
+    font: inherit; font-weight: 700; font-size: 1.05rem; text-decoration: none; cursor: pointer;
+    box-shadow: 0 6px 20px -8px var(--accent);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 10px 26px -8px var(--accent); }
+  .btn:active { transform: translateY(0); }
+  .btn .price-chip {
+    background: rgba(0,0,0,.14); padding: 3px 10px; border-radius: 999px; font-weight: 600; font-size: .95rem;
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text); box-shadow: inset 0 0 0 2px var(--border);
+  }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 2px var(--text); filter: none; }
+
+  /* Hero */
+  header.hero { padding: 72px 0 56px; position: relative; overflow: hidden; }
+  .hero-grid { display: grid; gap: 48px; align-items: center; grid-template-columns: 1.1fr .9fr; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--text); font-size: .85rem; font-weight: 600; letter-spacing: .02em;
+  }
+  .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  h1 {
+    font-size: clamp(2.3rem, 5.4vw, 4rem); line-height: 1.05; letter-spacing: -.03em;
+    margin: 18px 0 18px; font-weight: 800; text-wrap: balance;
+  }
+  .lede { font-size: 1.2rem; color: var(--muted); max-width: 34ch; margin: 0 0 30px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .rating { display: flex; align-items: center; gap: 10px; margin-top: 22px; color: var(--muted); font-size: .95rem; }
+  .stars { color: var(--accent); letter-spacing: 2px; font-size: 1.05rem; }
+
+  /* Hero art (pure CSS — no external images) */
+  .art {
+    position: relative; aspect-ratio: 1 / 1; border-radius: 28px; background: var(--surface);
+    box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden;
+  }
+  .art .blob { position: absolute; border-radius: 50%; filter: blur(2px); }
+  .art .b1 { width: 70%; height: 70%; left: -10%; top: -10%; background: radial-gradient(circle at 30% 30%, var(--accent), transparent 70%); opacity: .55; animation: drift 14s ease-in-out infinite; }
+  .art .b2 { width: 60%; height: 60%; right: -12%; bottom: -12%; background: radial-gradient(circle at 60% 60%, #ffb347, transparent 70%); opacity: .5; animation: drift 18s ease-in-out infinite reverse; }
+  .art .card {
+    position: absolute; inset: 18% 14%; border-radius: 18px; background: var(--surface);
+    border: 1px solid var(--border); box-shadow: var(--shadow); padding: 22px; display: flex; flex-direction: column; gap: 12px;
+    transform: rotate(-4deg); animation: float 7s ease-in-out infinite;
+  }
+  .art .line { height: 10px; border-radius: 6px; background: var(--surface-2); }
+  .art .line.w60 { width: 60%; } .art .line.w80 { width: 80%; } .art .line.w40 { width: 40%; }
+  .art .line.accent { background: var(--accent); width: 35%; height: 14px; }
+  .art .badge {
+    position: absolute; right: 8%; top: 10%; background: var(--text); color: var(--bg);
+    padding: 8px 14px; border-radius: 999px; font-weight: 700; font-size: .9rem; transform: rotate(6deg);
+    box-shadow: var(--shadow);
+  }
+  @keyframes float { 0%,100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-2deg) translateY(-10px); } }
+  @keyframes drift { 0%,100% { transform: translate(0,0); } 50% { transform: translate(8%, 6%); } }
+
+  /* Trust strip */
+  .strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
+  .strip ul { list-style: none; margin: 0; padding: 18px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .strip li { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: .95rem; justify-content: center; text-align: left; }
+  .strip svg { flex: none; }
+
+  /* Sections */
+  section { padding: 80px 0; }
+  .kicker { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; margin: 0 0 10px; }
+  h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); letter-spacing: -.02em; line-height: 1.15; margin: 0 0 18px; text-wrap: balance; }
+  .two-col { display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+  .desc {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 32px; box-shadow: var(--shadow);
+    overflow-wrap: anywhere;
+  }
+  .desc :first-child { margin-top: 0; } .desc :last-child { margin-bottom: 0; }
+  .desc img, .desc video, .desc iframe { max-width: 100%; height: auto; border-radius: 12px; }
+  .desc a { color: var(--accent); }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; margin-top: 32px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 26px; position: relative;
+  }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+    background: var(--accent-soft); color: var(--accent); font-weight: 800; margin-bottom: 14px;
+  }
+  .step h3 { margin: 0 0 6px; font-size: 1.15rem; }
+  .step p { margin: 0; color: var(--muted); }
+
+  /* Final CTA */
+  .final {
+    background: var(--text); color: var(--bg); border-radius: 32px; padding: 64px 32px; text-align: center; position: relative; overflow: hidden;
+  }
+  .final h2 { color: var(--bg); }
+  .final p { color: color-mix(in srgb, var(--bg) 75%, transparent); max-width: 46ch; margin: 0 auto 28px; }
+  .final .price-big { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -.03em; display: block; margin-bottom: 20px; color: var(--bg); }
+  .final::after {
+    content: ""; position: absolute; width: 420px; height: 420px; right: -140px; top: -180px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent), transparent 65%); opacity: .45; pointer-events: none;
+  }
+
+  /* FAQ */
+  .faq { max-width: 760px; margin: 0 auto; }
+  details { border-bottom: 1px solid var(--border); padding: 4px 0; }
+  summary {
+    cursor: pointer; list-style: none; padding: 18px 40px 18px 0; font-weight: 700; font-size: 1.08rem; position: relative;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+"; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--accent); transition: transform .2s ease;
+  }
+  details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+  details p { margin: 0 0 18px; color: var(--muted); }
+
+  footer { padding: 40px 0 110px; text-align: center; color: var(--muted); font-size: .9rem; }
+
+  /* Sticky mobile buy bar */
+  .sticky {
+    position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 10px 10px 10px 18px;
+    box-shadow: var(--shadow); transform: translateY(140%); transition: transform .3s ease;
+  }
+  .sticky.show { transform: translateY(0); }
+  .sticky .s-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .sticky .s-price { color: var(--muted); font-size: .9rem; }
+  .sticky .btn { min-height: 46px; padding: 0 20px; flex: none; }
+  @media (min-width: 861px) { .sticky { left: auto; right: 24px; bottom: 24px; max-width: 420px; } }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  .no-js .reveal { opacity: 1; transform: none; }
+
+  @media (max-width: 860px) {
+    header.hero { padding: 40px 0 40px; }
+    .hero-grid, .two-col { grid-template-columns: 1fr; gap: 32px; }
+    .art { max-width: 420px; margin: 0 auto; width: 100%; }
+    .steps { grid-template-columns: 1fr; }
+    .strip ul { grid-template-columns: 1fr; gap: 10px; }
+    .strip li { justify-content: flex-start; }
+    section { padding: 56px 0; }
+    .desc { padding: 22px; }
+    .final { padding: 48px 22px; border-radius: 24px; }
+    .cta-row .btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body class="no-js">
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Instant digital download</span>
+      <h1 data-gumroad-field="name">Your next favorite thing</h1>
+      <p class="lede">Everything you need, delivered the moment you check out. No waiting, no shipping, no fuss.</p>
+      <div class="cta-row">
+        <a href="#buy" class="btn" data-gumroad-action="buy">
+          I want this <span class="price-chip" data-gumroad-field="price">Buy</span>
+        </a>
+        <a href="#details" class="btn btn-ghost">See what's inside</a>
+      </div>
+      <div class="rating">
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <span><span data-gumroad-field="rating">Be the first to review</span> · <span data-gumroad-field="review-count">new release</span></span>
+      </div>
+    </div>
+    <div class="art" aria-hidden="true">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="card">
+        <div class="line accent"></div>
+        <div class="line w80"></div>
+        <div class="line w60"></div>
+        <div class="line w80"></div>
+        <div class="line w40"></div>
+      </div>
+      <div class="badge">Ready to download</div>
+    </div>
+  </div>
+</header>
+
+<div class="strip">
+  <div class="wrap">
+    <ul>
+      <li>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Instant access after purchase
+      </li>
+      <li>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secure checkout via Gumroad
+      </li>
+      <li>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/></svg>
+        Receipt &amp; link sent to your inbox
+      </li>
+    </ul>
+  </div>
+</div>
+
+<main id="main">
+  <section id="details">
+    <div class="wrap two-col">
+      <div class="reveal">
+        <p class="kicker">What you get</p>
+        <h2>Built to be useful from minute one.</h2>
+        <p style="color:var(--muted);margin:0 0 24px">Here's the full rundown, straight from the creator.</p>
+        <a href="#buy" class="btn" data-gumroad-action="buy">Get instant access</a>
+      </div>
+      <div class="desc reveal" data-gumroad-field="description">
+        <p>Product details will appear here.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="kicker">How it works</p>
+        <h2>Three steps. About a minute.</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <h3>Check out securely</h3>
+          <p>Tap the button and pay with card or PayPal through Gumroad's checkout.</p>
+        </div>
+        <div class="step reveal">
+          <h3>Get it instantly</h3>
+          <p>Your download unlocks right away, and a copy of the link lands in your email.</p>
+        </div>
+        <div class="step reveal">
+          <h3>Keep it forever</h3>
+          <p>Access your purchase anytime from your Gumroad library, on any device.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="buy" style="padding-top:0">
+    <div class="wrap">
+      <div class="final reveal">
+        <p class="kicker">Ready when you are</p>
+        <h2 data-gumroad-field="name">Get it today</h2>
+        <span class="price-big" data-gumroad-field="price">Available now</span>
+        <p>One click to checkout. Instant delivery to your inbox and Gumroad library.</p>
+        <button type="button" class="btn" data-gumroad-action="buy">I want this</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap faq">
+      <p class="kicker reveal">FAQ</p>
+      <h2 class="reveal">Questions, answered.</h2>
+      <details class="reveal">
+        <summary>How do I get my purchase?</summary>
+        <p>Right after checkout you'll see your download, and Gumroad emails you a receipt with a link. You can also find it any time in your Gumroad library.</p>
+      </details>
+      <details class="reveal">
+        <summary>What payment methods are accepted?</summary>
+        <p>Gumroad's checkout accepts major credit and debit cards, and PayPal in most regions.</p>
+      </details>
+      <details class="reveal">
+        <summary>Do I need a Gumroad account?</summary>
+        <p>No. You can check out with just your email. Creating a free account lets you keep all your purchases in one library.</p>
+      </details>
+      <details class="reveal">
+        <summary>I have a question that isn't here.</summary>
+        <p>Reply to your receipt email and it goes straight to the creator.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Sold securely through Gumroad.</div>
+</footer>
+
+<div class="sticky" id="sticky" aria-hidden="true">
+  <div style="min-width:0">
+    <div class="s-name" data-gumroad-field="name">This product</div>
+    <div class="s-price" data-gumroad-field="price"></div>
+  </div>
+  <a href="#buy" class="btn" data-gumroad-action="buy" tabindex="-1">Buy now</a>
+</div>
+
+<script>
+  (function () {
+    document.body.classList.remove("no-js");
+
+    var reveals = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(function (el) { io.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add("in"); });
+    }
+
+    // Show the sticky buy bar once the hero CTA scrolls out of view, hide it near the final CTA.
+    var sticky = document.getElementById("sticky");
+    var hero = document.querySelector("header.hero");
+    var final = document.getElementById("buy");
+    var heroGone = false, finalVisible = false;
+    function update() {
+      var show = heroGone && !finalVisible;
+      sticky.classList.toggle("show", show);
+      sticky.setAttribute("aria-hidden", show ? "false" : "true");
+      var link = sticky.querySelector("a");
+      if (show) link.removeAttribute("tabindex"); else link.setAttribute("tabindex", "-1");
+    }
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (e) { heroGone = !e[0].isIntersecting; update(); }).observe(hero);
+      new IntersectionObserver(function (e) { finalVisible = e[0].isIntersecting; update(); }).observe(final);
+    }
+  })();
+</script>
+</body>
+</html>
